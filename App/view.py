@@ -52,8 +52,11 @@ def printMenu():
     print("Bienvenido")
     print("1- Inicializar Analizador")
     print("2- Cargar información de accidentes")
-    print("3- Requerimento 1")
-    print("4- Requerimento 2")
+    print("3- Conocer los accidentes en una fecha específica")
+    print("4- Conocer los accidentes anteriores a una fecha")
+    print("5- Conocer los accidentes en un rango de fechas")
+    print("6- Conocer el estado con más accidentes")
+    print("7- Conocer los accidentes en un rango de tiempo")
     print("0- Salir")
     print("*******************************************")
 
@@ -85,8 +88,24 @@ while True:
             print("Esta fecha no se encuentra en el registro")
         
     elif int(inputs[0]) == 4:
-        print("\nRequerimiento No 1 del reto 3: ")
+        print("\nRequerimiento No 2 del reto 3: ")
+    
+    elif int(inputs[0]) == 5:
+        in_fe1 = input("Ingrese la fecha menor del rango en el formato AAAA-MM-DD: ")
+        in_fe2 = input("Ingrese la fecha mayor del rango en el formato AAAA-MM-DD: ")
+        print("\nBuscando crimenes en un rango de fechas: ")
+        res = controller.getAccidentsByDateRange(cont,in_fe1,in_fe2)
+        if res != None:
+            print("Entre las fechas",in_fe1,"y",in_fe2,"ocurrieron",res[0],"accidentes.\nSeveridad 1:",res[1],"\nSeveridad 2:",res[2],"\nSeveridad 3:",res[3],"\nSeveridad 4:",res[4])
+        else:
+            print("Esta fecha no se encuentra en el registro")
 
+    elif int(inputs[0]) == 6:
+        print("\nRequerimiento No 4 del reto 3: ")
+    
+    elif int(inputs[0]) == 7:
+        print("\nRequerimiento No 5 del reto 3: ")
+    
     else:
         sys.exit(0)
 sys.exit(0)
