@@ -41,7 +41,7 @@ def newAnalyzer():
     analyzer = {"crashes":None,
                 "dateIndex":None}
     analyzer["crashes"]=lt.newList("SINGLED_LINKED",compareIds)
-    analyzer["dateIndex"]=om.newMap(omaptype="BST",comparefunction=compareDates)
+    analyzer["dateIndex"]=om.newMap(omaptype="RBT",comparefunction=compareDates)
     return analyzer
 
 
