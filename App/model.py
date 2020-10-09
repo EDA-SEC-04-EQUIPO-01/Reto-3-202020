@@ -24,6 +24,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as m
+from DISClib.DataStructures import listiterator as it
 import datetime
 assert config
 
@@ -156,6 +157,39 @@ def getAccidentsByDate(date, analyzer):
         res = None
     return res 
 
+
+def getAccidentsByDateRange(date1, date2, analyzer):
+    try:
+        total = 0
+        cant1 = 0
+        cant2 = 0
+        cant3 = 0
+        cant4 = 0
+        dates = om.values(analyzer["dateIndex"],date1,date2)
+        iterator = it.newIterator(dates)
+        while it.hasNext(iterator):
+            element = it.next(iterator)
+            total += int(lt.size(element["crashes"]))
+            sev1 = m.get(element["accident_type"],"1")
+            if sev1 != None:
+                v1 = me.getValue(sev1)
+                cant1 += int(lt.size(v1["accidents"]))
+            sev2 = m.get(element["accident_type"],"2")
+            if sev2 != None:
+                v2 = me.getValue(sev2)
+                cant2 += int(lt.size(v2["accidents"]))
+            sev3 = m.get(element["accident_type"],"3")
+            if sev3 != None:
+                v3 = me.getValue(sev3)
+                cant3 += int(lt.size(v3["accidents"]))
+            sev4 = m.get(element["accident_type"],"4")
+            if sev4 != None:
+                v4 = me.getValue(sev4)
+                cant4 += int(lt.size(v4["accidents"]))
+            res = (total, cant1, cant2, cant3, cant4) 
+    except:
+         res = None
+    return res 
 # ==============================
 # Funciones de Comparacion
 # ==============================

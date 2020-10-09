@@ -91,5 +91,16 @@ def maxKey(analyzer):
     return model.maxKey(analyzer)
 
 def getAccidentsByDate(analyzer, date):
-    newDate = datetime.datetime.strptime(date, '%Y-%m-%d')
-    return model.getAccidentsByDate(newDate.date(),analyzer)
+    try:
+        newDate = datetime.datetime.strptime(date, '%Y-%m-%d')
+        return model.getAccidentsByDate(newDate.date(),analyzer)
+    except:
+        return None 
+
+def getAccidentsByDateRange(analyzer, date1, date2):
+    try:
+        newDate1 = datetime.datetime.strptime(date1, '%Y-%m-%d')
+        newDate2 = datetime.datetime.strptime(date2, '%Y-%m-%d')
+        return model.getAccidentsByDateRange(newDate1.date(),newDate2.date(),analyzer)
+    except:
+        return None 
