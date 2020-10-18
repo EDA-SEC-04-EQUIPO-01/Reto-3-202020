@@ -98,14 +98,19 @@ while True:
         if res != None:
             print("Entre las fechas",in_fe1,"y",in_fe2,"ocurrieron",res[0],"accidentes.\nSeveridad 1:",res[1],"\nSeveridad 2:",res[2],"\nSeveridad 3:",res[3],"\nSeveridad 4:",res[4])
         else:
-            print("Esta fecha no se encuentra en el registro")
+            print("Ingrese un rango válido")
 
     elif int(inputs[0]) == 6:
         print("\nRequerimiento No 4 del reto 3: ")
     
     elif int(inputs[0]) == 7:
-        print("\nRequerimiento No 5 del reto 3: ")
-    
+        in_ti1 = input("Ingrese la hora menor del rango en el formato HH:MM:SS (MILITAR): ")
+        in_ti2 = input("Ingrese la hora mayor del rango en el formato HH:MM:SS (MILITAR): ")
+        res = controller.accidentsByTimeRange(in_ti1,in_ti2,cont)
+        if res != None:
+            print("Entre las horas",in_ti1,"y",in_ti2,"ocurrieron",res[0],"accidentes.\nSeveridad 1:",res[1],"\nSeveridad 2:",res[2],"\nSeveridad 3:",res[3],"\nSeveridad 4:",res[4])
+        else:
+            print("Ingrese un rango válido")
     else:
         sys.exit(0)
 sys.exit(0)

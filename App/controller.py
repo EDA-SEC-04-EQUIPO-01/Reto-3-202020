@@ -104,3 +104,10 @@ def getAccidentsByDateRange(analyzer, date1, date2):
         return model.getAccidentsByDateRange(newDate1.date(),newDate2.date(),analyzer)
     except:
         return None 
+def accidentsByTimeRange(time1, time2, analyzer):
+    try:
+        oftime1 = model.timefix(time1)
+        oftime2 = model.timefix(time2)
+        return model.accidentsByTimeRange(oftime1,oftime2,analyzer)
+    except:
+        return None
