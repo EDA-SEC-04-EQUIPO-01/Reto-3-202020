@@ -104,6 +104,15 @@ def getAccidentsByDateRange(analyzer, date1, date2):
         return model.getAccidentsByDateRange(newDate1.date(),newDate2.date(),analyzer)
     except:
         return None 
+
+def getStateByDateRange(analyzer, initialDate, finalDate):
+    try:
+        newDate1 = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
+        newDate2 = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
+        return model.getStateByDateRange(newDate1.date(),newDate2.date(),analyzer)
+      except:
+        return None
+      
 def accidentsByTimeRange(time1, time2, analyzer):
     try:
         oftime1 = model.timefix(time1)
