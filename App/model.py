@@ -43,6 +43,7 @@ def newAnalyzer():
                 "dateIndex":None}
     analyzer["crashes"]=lt.newList("SINGLED_LINKED",compareIds)
     analyzer["dateIndex"]=om.newMap(omaptype="RBT",comparefunction=compareDates)
+    analyzer["timeIndex"]= om.newMap(omaptype="RBT",comparefunction=compareTime)
     return analyzer
 
 
@@ -51,6 +52,7 @@ def newAnalyzer():
 def addAccident(analyzer,accident):
     lt.addLast(analyzer["crashes"],accident)
     addDate(analyzer["dateIndex"], accident)
+    addTime(analyzer["timeIndex"], accident)
 
 def addDate(dateIndex, accident):
     accident_fullDate = accident["Start_Time"]
@@ -94,7 +96,35 @@ def newTypes(accident):
     type["crashes"]=lt.newList("SINGLED_LINKED",compareIds)
     return type
     
+def addTime(timeIndex,accident):
+    fulldate = accident["Start_Time"]
+    time = ""
+    for a in range(11,19):
+        time += fulldate[a]
+    oftime = timefix(time)
+    is_There = om.get(timeIndex,oftime)
+    if is_There is not None:
+        type = me.getValue(is_There)
+    else:
+        type = newTypes(accident)
+        om.put(timeIndex,time,type)
+    updateIndex(type, accident)
+    return timeIndex
+    
+def timefix(time):
+    if int(time[3]+time[4])<15 and int(time[3]+time[4])>=0:
+        time = time[0]+time[1]+":00:00"
 
+    elif int(time[3]+time[4])>=15 and int(time[3]+time[4])<45:
+        time = time[0]+time[1]+":30:00"
+
+    elif int(time[3]+time[4])>=45 and int(time[3]+time[4])<59:
+        hora = int(time[0]+time[1])+1
+        if len(str(hora))<2:
+            time ="0"+str(hora)+":00:00"
+        else:
+            time = str(hora)[0]+str(hora)[1]+":00:00"
+    return time
 
 
 # ==============================
@@ -188,6 +218,7 @@ def getAccidentsByDateRange(date1, date2, analyzer):
          res = None
     return res 
 
+
 def getStateByDateRange(initialDate, finalDate, analyzer):
     vdatesInRange = om.values(analyzer["dateIndex"], initialDate, finalDate)
     datesInRange = om.keys(analyzer["dateIndex"], initialDate, finalDate)
@@ -223,6 +254,40 @@ def getStateByDateRange(initialDate, finalDate, analyzer):
 
 
     
+def accidentsByTimeRange(time1, time2, analyzer):
+    try:
+        total = 0
+        cant1 = 0
+        cant2 = 0
+        cant3 = 0
+        cant4 = 0
+        times = om.values(analyzer["timeIndex"],time1,time2)
+        iterator = it.newIterator(times)
+        while it.hasNext(iterator):
+            element = it.next(iterator)
+            total += int(lt.size(element["crashes"]))
+            sev1 = m.get(element["accident_type"],"1")
+            if sev1 != None:
+                v1 = me.getValue(sev1)
+                cant1 += int(lt.size(v1["accidents"]))
+            sev2 = m.get(element["accident_type"],"2")
+            if sev2 != None:
+                v2 = me.getValue(sev2)
+                cant2 += int(lt.size(v2["accidents"]))
+            sev3 = m.get(element["accident_type"],"3")
+            if sev3 != None:
+                v3 = me.getValue(sev3)
+                cant3 += int(lt.size(v3["accidents"]))
+            sev4 = m.get(element["accident_type"],"4")
+            if sev4 != None:
+                v4 = me.getValue(sev4)
+                cant4 += int(lt.size(v4["accidents"]))
+            res = (total, cant1, cant2, cant3, cant4) 
+    except:
+         res = None
+    return res 
+
+
 # ==============================
 # Funciones de Comparacion
 # ==============================
@@ -247,6 +312,16 @@ def compareTypes(type1,type2):
     if (type1 == type):
         return 0
     elif type1 > type:
+        return 1
+    else:
+        return -1
+
+def compareTime(time1, time2):
+    timea = int(time1[0]+time1[1]+time1[3])
+    timeb = int(time2[0]+time2[1]+time2[3])
+    if (timea == timeb):
+        return 0
+    elif (timea > timeb):
         return 1
     else:
         return -1

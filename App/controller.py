@@ -110,5 +110,13 @@ def getStateByDateRange(analyzer, initialDate, finalDate):
         newDate1 = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
         newDate2 = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
         return model.getStateByDateRange(newDate1.date(),newDate2.date(),analyzer)
+      except:
+        return None
+      
+def accidentsByTimeRange(time1, time2, analyzer):
+    try:
+        oftime1 = model.timefix(time1)
+        oftime2 = model.timefix(time2)
+        return model.accidentsByTimeRange(oftime1,oftime2,analyzer)
     except:
         return None
