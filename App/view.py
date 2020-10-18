@@ -25,6 +25,7 @@ import config
 from DISClib.ADT import list as lt
 from App import controller
 assert config
+from time import process_time
 
 """
 La vista se encarga de la interacción con el usuario.
@@ -75,7 +76,10 @@ while True:
 
     elif int(inputs[0]) == 2:
         print("\nCargando información de crimenes ....")
+        t1_start = process_time()
         controller.loadData(cont,accidentsfile)
+        t1_stop = process_time()
+        print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
         print("\nSe cargaron", controller.accidentsSize(cont), "elementos en el árbol\nCon una altura de:", controller.indexHeight(cont))
         print("Mayor:", controller.maxKey(cont), "Menor:", controller.minKey(cont))
     elif int(inputs[0]) == 3:
@@ -101,7 +105,15 @@ while True:
             print("Esta fecha no se encuentra en el registro")
 
     elif int(inputs[0]) == 6:
-        print("\nRequerimiento No 4 del reto 3: ")
+        initialDate = input("Ingrese la fecha menor del rango en el formato AAAA-MM-DD: ")
+        finalDate = input("Ingrese la fecha mayor del rango en el formato AAAA-MM-DD: ")
+        res = controller.getStateByDateRange(cont,initialDate,finalDate)
+        if res is None:
+            print("Recuerda ingresar bien las fechas de acuerdo a los datos que tenemos registrados y a las instrucciones.")
+        elif res[0] is None:
+            print("No hay ningún registro de accidentes en ese rango de fechas.")
+        else:
+            print("El estado que más se repite entre", initialDate, "y", finalDate, "es:", res[1], "y la fecha con más accidentes en ese rango fue", res[0])
     
     elif int(inputs[0]) == 7:
         print("\nRequerimiento No 5 del reto 3: ")

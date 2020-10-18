@@ -68,10 +68,7 @@ def updateIndex(type,accident):
     lst = type["crashes"]
     lt.addLast(lst, accident)
     accident_type = type["accident_type"]
-    #print(accident["Severity"])
-    #print(accident_type)
     is_there_type = m.get(accident_type, accident["Severity"])
-    #print(is_there_type)
     if is_there_type is None:
         index = newAccidentIndex(accident["Severity"])
         lt.addLast(index["accidents"],accident)
@@ -79,7 +76,6 @@ def updateIndex(type,accident):
     else:
         index = me.getValue(is_there_type)
         lt.addLast(index["accidents"],accident)
-    #print(type)
     return type
 
 def newAccidentIndex(severity):
@@ -91,7 +87,8 @@ def newAccidentIndex(severity):
 
 def newTypes(accident):
     type = {"accident_type":None, "crashes":None}
-    type["accident_type"] = m.newMap(numelements=10,
+    type["accident_type"] = m.newMap(numelements=10, 
+                                     loadfactor=0.4,
                                      maptype="PROBING",
                                      comparefunction=compareTypes)
     type["crashes"]=lt.newList("SINGLED_LINKED",compareIds)
@@ -190,6 +187,42 @@ def getAccidentsByDateRange(date1, date2, analyzer):
     except:
          res = None
     return res 
+
+def getStateByDateRange(initialDate, finalDate, analyzer):
+    vdatesInRange = om.values(analyzer["dateIndex"], initialDate, finalDate)
+    datesInRange = om.keys(analyzer["dateIndex"], initialDate, finalDate)
+    iterator = it.newIterator(vdatesInRange)
+    iterator2 = it.newIterator(datesInRange)
+    states = m.newMap(53,maptype='PROBING',loadfactor=0.47,comparefunction=compareTypes)
+    masAccidentada = None
+    nAccidentada = 0
+    state= None
+    aState = 0
+    while it.hasNext(iterator):
+        element = it.next(iterator)
+        element2 = it.next(iterator2)
+        iterator3 = it.newIterator(element["crashes"])
+        accidentes = lt.size(element["crashes"])
+        if accidentes > nAccidentada:
+            masAccidentada = element2
+            nAccidentada = accidentes
+        while it.hasNext(iterator3):
+            element3 = it.next(iterator3)
+            estado = element3["State"]
+            is_state = m.get(states, estado)
+            if is_state is None:
+                m.put(states, estado, 1)
+                is_state = {"key":estado, "value":1}
+            else:
+                m.put(states, estado, int(me.getValue(is_state))+1)
+            repeticion = me.getValue(is_state)
+            if repeticion > aState:
+                aState = repeticion
+                state = estado
+    return [masAccidentada, state]
+
+
+    
 # ==============================
 # Funciones de Comparacion
 # ==============================
@@ -202,10 +235,6 @@ def compareIds(id1,id2):
         return -1
 
 def compareDates(date1, date2):
-    """
-    Compara dos ids de libros, id es un identificador
-    y entry una pareja llave-valor
-    """
     if (date1 == date2):
         return 0
     elif (date1 > date2):
