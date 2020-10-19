@@ -127,6 +127,32 @@ def maxKey(analyzer):
     
     return om.maxKey(analyzer['dateIndex'])
 
+def getAccidentsBeforeDate(date1, analyzer):
+    total=0
+    compa=0
+    comparable=0
+    mayorAccidentes="ninguna"
+    try:
+        minFecha= minKey(analyzer)
+        dates = om.values(analyzer["dateIndex"],minFecha,date1)
+        iterator = it.newIterator(dates)
+        keys = om.keys(analyzer["dateIndex"],minFecha,date1)
+        iterator1 = it.newIterator(keys)
+        while it.hasNext(iterator):
+            element = it.next(iterator)
+            total += int(lt.size(element["crashes"]))
+
+            element1 = it.next(iterator1)
+            comparable = int(lt.size(element["crashes"]))
+            if comparable>compa:
+                compa=comparable
+                mayorAccidentes = element1
+    
+        res=(total, mayorAccidentes)
+    except: 
+        res = None
+    return res 
+
 def getAccidentsByDate(date, analyzer):
     try:
         cant1 = 0
