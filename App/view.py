@@ -91,8 +91,15 @@ while True:
         else:
             print("Esta fecha no se encuentra en el registro")
         
-    elif int(inputs[0]) == 4:
-        print("\nRequerimiento No 2 del reto 3: ")
+    elif int(inputs[0]) == 4:       #N
+        in_fe1 = input("Ingrese una fecha en formato AAAA-MM-DD: ")
+        print("\nBuscando crimenes antes de la fecha establecida: ")
+        res = controller.getAccidentsBeforeDate(cont,in_fe1)
+        if res != None:
+            print("Antes de la fecha",in_fe1,"ocurrieron",res[0],"accidentes.\nLa fecha en la que más accidentes se reportaron es:",res[1])
+        else:
+            print("No se encuentran accidentes previos a la fecha establecida")
+
     
     elif int(inputs[0]) == 5:
         in_fe1 = input("Ingrese la fecha menor del rango en el formato AAAA-MM-DD: ")
