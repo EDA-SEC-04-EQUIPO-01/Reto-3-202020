@@ -315,7 +315,8 @@ def accidentsByTimeRange(time1, time2, analyzer):
             if sev4 != None:
                 v4 = me.getValue(sev4)
                 cant4 += int(lt.size(v4["accidents"]))
-            res = (total, cant1, cant2, cant3, cant4) 
+        per = round((total/int(accidentsSize(analyzer)))*100,2)
+        res = (total, cant1, cant2, cant3, cant4, per) 
     except:
          res = None
     return res 
