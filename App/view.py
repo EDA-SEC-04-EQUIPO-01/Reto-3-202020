@@ -109,6 +109,7 @@ while True:
         res = controller.accidentsByTimeRange(in_ti1,in_ti2,cont)
         if res != None:
             print("Entre las horas",in_ti1,"y",in_ti2,"ocurrieron",res[0],"accidentes.\nSeveridad 1:",res[1],"\nSeveridad 2:",res[2],"\nSeveridad 3:",res[3],"\nSeveridad 4:",res[4])
+            print("Estos accidentes representan el",res[5],"% del total de accidentes.")
         else:
             print("Ingrese un rango válido")
     else:
