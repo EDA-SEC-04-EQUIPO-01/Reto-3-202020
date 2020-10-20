@@ -107,7 +107,7 @@ while True:
         print("\nBuscando crimenes en un rango de fechas: ")
         res = controller.getAccidentsByDateRange(cont,in_fe1,in_fe2)
         if res != None:
-            print("Entre las fechas",in_fe1,"y",in_fe2,"ocurrieron",res[0],"accidentes.\nSeveridad 1:",res[1],"\nSeveridad 2:",res[2],"\nSeveridad 3:",res[3],"\nSeveridad 4:",res[4])
+            print("Entre las fechas",in_fe1,"y",in_fe2,"ocurrieron",res[0],"accidentes.\nLa",res[2],"fue la que más accidentes tuvo en este rango, con un total acumulado de",res[1])
         else:
             print("Ingrese un rango válido")
 

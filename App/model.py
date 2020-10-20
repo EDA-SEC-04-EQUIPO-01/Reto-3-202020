@@ -239,7 +239,14 @@ def getAccidentsByDateRange(date1, date2, analyzer):
             if sev4 != None:
                 v4 = me.getValue(sev4)
                 cant4 += int(lt.size(v4["accidents"]))
-            res = (total, cant1, cant2, cant3, cant4) 
+        if cant1 > cant2 and cant1 > cant3 and cant1 > cant4:
+            res = (total, cant1, "severidad 1") 
+        elif cant2 > cant1 and cant2 > cant3 and cant2 > cant4:
+            res = (total, cant2, "severidad 2") 
+        elif cant3 > cant2 and cant3 > cant1 and cant1 > cant4:
+            res = (total, cant3, "severidad 3") 
+        elif cant4 > cant2 and cant4 > cant3 and cant4 > cant3:
+            res = (total, cant4, "severidad 4") 
     except:
          res = None
     return res 
