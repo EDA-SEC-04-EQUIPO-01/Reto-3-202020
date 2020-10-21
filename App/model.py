@@ -25,6 +25,7 @@ from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as m
 from DISClib.DataStructures import listiterator as it
+from math import radians, cos, sin, asin, sqrt 
 import datetime
 assert config
 
@@ -40,31 +41,50 @@ es decir contiene los modelos con los datos en memoria
 # -----------------------------------------------------
 def newAnalyzer():
     analyzer = {"crashes":None,
-                "dateIndex":None}
+                "dateIndex":None,
+                "timeIndex":None,
+                "weekIndex":None}
     analyzer["crashes"]=lt.newList("SINGLED_LINKED",compareIds)
     analyzer["dateIndex"]=om.newMap(omaptype="RBT",comparefunction=compareDates)
     analyzer["timeIndex"]= om.newMap(omaptype="RBT",comparefunction=compareTime)
+    analyzer["weekIndex"]=m.newMap(numelements=7, 
+                                   loadfactor=0.71428571428571428571428571428571,
+                                   maptype="CHAINING",
+                                   comparefunction=compareTypes)
     return analyzer
 
 
 # Funciones para agregar informacion al catalogo
+def dateTimeChange(date):
+    return (datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S')).date()
 
 def addAccident(analyzer,accident):
     lt.addLast(analyzer["crashes"],accident)
     addDate(analyzer["dateIndex"], accident)
     addTime(analyzer["timeIndex"], accident)
+    addWeek(analyzer["weekIndex"], accident)
+    
+def addWeek(weekIndex,accident):
+    is_there_week = m.get(weekIndex, dateTimeChange(accident["Start_Time"]).weekday())
+    if is_there_week is None:
+        index = lt.newList(datastructure="SINGLE_LINKED", cmpfunction=compareDates)
+        lt.addLast(index, {"lon":accident["Start_Lng"],"lat":accident["Start_Lat"]})
+        m.put(weekIndex, dateTimeChange(accident["Start_Time"]).weekday(), index)
+    else:
+        index = me.getValue(is_there_week)
+        lt.addLast(index, {"lon":accident["Start_Lng"],"lat":accident["Start_Lat"]})
+    
 
-def addDate(dateIndex, accident):
-    accident_fullDate = accident["Start_Time"]
-    accident_date = datetime.datetime.strptime(accident_fullDate, '%Y-%m-%d %H:%M:%S')
-    is_There = om.get(dateIndex, accident_date.date())
+def addDate(dateIndex, accident): 
+    accident_date = dateTimeChange(accident["Start_Time"])
+    is_There = om.get(dateIndex, accident_date)
     if is_There is not None:
         type = me.getValue(is_There)
     else:
         type = newTypes(accident)
-        om.put(dateIndex,accident_date.date(),type)
+        om.put(dateIndex,accident_date,type)
     updateIndex(type, accident)
-    return dateIndex
+    
 
 def updateIndex(type,accident):
     lst = type["crashes"]
@@ -80,6 +100,7 @@ def updateIndex(type,accident):
         lt.addLast(index["accidents"],accident)
     return type
 
+
 def newAccidentIndex(severity):
     index = {"type":None, "accidents":None}
     index["type"]=severity
@@ -89,9 +110,9 @@ def newAccidentIndex(severity):
 
 def newTypes(accident):
     type = {"accident_type":None, "crashes":None}
-    type["accident_type"] = m.newMap(numelements=10, 
-                                     loadfactor=0.4,
-                                     maptype="PROBING",
+    type["accident_type"] = m.newMap(numelements=5, 
+                                     loadfactor=0.8,
+                                     maptype="CHAINING",
                                      comparefunction=compareTypes)
     type["crashes"]=lt.newList("SINGLED_LINKED",compareIds)
     return type
@@ -108,8 +129,6 @@ def addTime(timeIndex,accident):
     else:
         type = newTypes(accident)
         om.put(timeIndex,time,type)
-    updateIndex(type, accident)
-    return timeIndex
     
 def timefix(time):
     if int(time[3]+time[4])<15 and int(time[3]+time[4])>=0:
@@ -218,7 +237,6 @@ def getAccidentsByDateRange(date1, date2, analyzer):
          res = None
     return res 
 
-
 def getStateByDateRange(initialDate, finalDate, analyzer):
     vdatesInRange = om.values(analyzer["dateIndex"], initialDate, finalDate)
     datesInRange = om.keys(analyzer["dateIndex"], initialDate, finalDate)
@@ -251,6 +269,48 @@ def getStateByDateRange(initialDate, finalDate, analyzer):
                 aState = repeticion
                 state = estado
     return [masAccidentada, state]
+
+def distance(lat1, lat2, lon1, lon2): 
+    lon1 = radians(lon1) 
+    lon2 = radians(lon2) 
+    lat1 = radians(lat1) 
+    lat2 = radians(lat2)    
+    dlon = lon2 - lon1  
+    dlat = lat2 - lat1 
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * asin(sqrt(a))   
+    r = 6371
+    return(c * r) 
+
+def getElement(key_value):
+    try:
+        return me.getValue(key_value)
+    except:
+        return 0
+
+def getLatitudeRange(lat, lon, radius, analyzer):
+    total = 0
+    days = m.keySet(analyzer["weekIndex"])
+    iterator = it.newIterator(days)
+    crashesInRange = m.newMap(numelements=7, 
+                              maptype="CHAINING",
+                              loadfactor=0.71428571428571428571428571428571,
+                              comparefunction=compareTypes)
+    while it.hasNext(iterator):
+        day = it.next(iterator)
+        weekDaysContent = me.getValue(m.get(analyzer["weekIndex"], day))
+        iterator2 = it.newIterator(weekDaysContent)
+        while it.hasNext(iterator2):
+            lon_lat = it.next(iterator2)
+            if distance(lat, float(lon_lat["lat"]), lon, float(lon_lat["lon"]))<=radius:
+                total +=1
+                isThereDay = m.get(crashesInRange, day)
+                if isThereDay is not None: 
+                    m.put(crashesInRange, day, me.getValue(isThereDay)+1)
+                else:
+                    m.put(crashesInRange, day, 1)
+    
+    return (total, getElement(m.get(crashesInRange,0)),getElement(m.get(crashesInRange,1)),getElement(m.get(crashesInRange,2)),getElement(m.get(crashesInRange,3)),getElement(m.get(crashesInRange,4)),getElement(m.get(crashesInRange,5)),getElement(m.get(crashesInRange,6)))
 
 
     

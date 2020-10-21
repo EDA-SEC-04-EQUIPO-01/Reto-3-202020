@@ -41,6 +41,7 @@ operación seleccionada.
 
 #accidentsfile = 'US_Accidents_Dec19.csv'
 accidentsfile = 'us_accidents_small.csv'
+#accidentsfile = "us_accidents_dis_2016.csv"
 
 # ___________________________________________________
 #  Menu principal
@@ -58,6 +59,7 @@ def printMenu():
     print("5- Conocer los accidentes en un rango de fechas")
     print("6- Conocer el estado con más accidentes")
     print("7- Conocer los accidentes en un rango de tiempo")
+    print("8- Conocer la cantidad de accidentes ocurridoss en un día de la semana según un rango de latitud y longitud")
     print("0- Salir")
     print("*******************************************")
 
@@ -123,6 +125,12 @@ while True:
             print("Entre las horas",in_ti1,"y",in_ti2,"ocurrieron",res[0],"accidentes.\nSeveridad 1:",res[1],"\nSeveridad 2:",res[2],"\nSeveridad 3:",res[3],"\nSeveridad 4:",res[4])
         else:
             print("Ingrese un rango válido")
+    elif int(inputs[0]) == 8:
+        lat = float(input("Ingrese la latitud de su punto de partida: "))
+        lon = float(input("Ingrese la longitud de su punto de partida: "))
+        radius = float(input("Ingrese el radio de comparación en kilometros: "))
+        res = controller.getLatitudRange(lat,lon,radius,cont)
+        print("En el radio de ", radius, "kilometros, se encontraron", res[0], "accidentes, reportados de la siguiente manera:", "\nLunes:",res[1], "\nMartes:", res[2], "\nMiercoles:", res[3], "\nJueves:", res[4], "\nViernes:", res[5], "\nSabado:", res[6], "\nDomingo:", res[7])
     else:
         sys.exit(0)
 sys.exit(0)
