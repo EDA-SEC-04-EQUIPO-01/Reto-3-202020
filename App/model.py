@@ -93,18 +93,18 @@ def updateIndex(type,accident):
     is_there_type = m.get(accident_type, accident["Severity"])
     if is_there_type is None:
         index = newAccidentIndex(accident["Severity"])
-        lt.addLast(index["accidents"],accident)
+        index["accidents"]+=1
         m.put(accident_type, accident["Severity"], index)
     else:
         index = me.getValue(is_there_type)
-        lt.addLast(index["accidents"],accident)
+        index["accidents"]+=1
     return type
 
 
 def newAccidentIndex(severity):
     index = {"type":None, "accidents":None}
     index["type"]=severity
-    index["accidents"]=lt.newList("SINGLED_LINKED",compareTypes)
+    index["accidents"]=0
     return index
     
 
@@ -129,6 +129,7 @@ def addTime(timeIndex,accident):
     else:
         type = newTypes(accident)
         om.put(timeIndex,time,type)
+    updateIndex(type, accident)
     
 def timefix(time):
     if int(time[3]+time[4])<15 and int(time[3]+time[4])>=0:
@@ -211,19 +212,19 @@ def getAccidentsByDate(date, analyzer):
         sev1 = m.get(accidents_date["accident_type"],"1")
         if sev1 != None:
             v1 = me.getValue(sev1)
-            cant1 = lt.size(v1["accidents"])
+            cant1 = v1["accidents"]
         sev2 = m.get(accidents_date["accident_type"],"2")
         if sev2 != None:
             v2 = me.getValue(sev2)
-            cant2 = lt.size(v2["accidents"])
+            cant2 = v2["accidents"]
         sev3 = m.get(accidents_date["accident_type"],"3")
         if sev3 != None:
             v3 = me.getValue(sev3)
-            cant3 = lt.size(v3["accidents"])
+            cant3 = v3["accidents"]
         sev4 = m.get(accidents_date["accident_type"],"4")
         if sev4 != None:
             v4 = me.getValue(sev4)
-            cant4 = lt.size(v4["accidents"])
+            cant4 = v4["accidents"]
         res = (total, cant1, cant2, cant3, cant4)
     except: 
         res = None
@@ -245,19 +246,19 @@ def getAccidentsByDateRange(date1, date2, analyzer):
             sev1 = m.get(element["accident_type"],"1")
             if sev1 != None:
                 v1 = me.getValue(sev1)
-                cant1 += int(lt.size(v1["accidents"]))
+                cant1 += v1["accidents"]
             sev2 = m.get(element["accident_type"],"2")
             if sev2 != None:
                 v2 = me.getValue(sev2)
-                cant2 += int(lt.size(v2["accidents"]))
+                cant2 += v2["accidents"]
             sev3 = m.get(element["accident_type"],"3")
             if sev3 != None:
                 v3 = me.getValue(sev3)
-                cant3 += int(lt.size(v3["accidents"]))
+                cant3 += v3["accidents"]
             sev4 = m.get(element["accident_type"],"4")
             if sev4 != None:
                 v4 = me.getValue(sev4)
-                cant4 += int(lt.size(v4["accidents"]))
+                cant4 += v4["accidents"]
         if cant1 > cant2 and cant1 > cant3 and cant1 > cant4:
             res = (total, cant1, "severidad 1") 
         elif cant2 > cant1 and cant2 > cant3 and cant2 > cant4:
@@ -362,23 +363,23 @@ def accidentsByTimeRange(time1, time2, analyzer):
             sev1 = m.get(element["accident_type"],"1")
             if sev1 != None:
                 v1 = me.getValue(sev1)
-                cant1 += int(lt.size(v1["accidents"]))
+                cant1 += v1["accidents"]
             sev2 = m.get(element["accident_type"],"2")
             if sev2 != None:
                 v2 = me.getValue(sev2)
-                cant2 += int(lt.size(v2["accidents"]))
+                cant2 += v2["accidents"]
             sev3 = m.get(element["accident_type"],"3")
             if sev3 != None:
                 v3 = me.getValue(sev3)
-                cant3 += int(lt.size(v3["accidents"]))
+                cant3 += v3["accidents"]
             sev4 = m.get(element["accident_type"],"4")
             if sev4 != None:
                 v4 = me.getValue(sev4)
-                cant4 += int(lt.size(v4["accidents"]))
+                cant4 += v4["accidents"]
         per = round((total/int(accidentsSize(analyzer)))*100,2)
         res = (total, cant1, cant2, cant3, cant4, per) 
     except:
-         res = None
+        res = None
     return res 
 
 
