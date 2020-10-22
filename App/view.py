@@ -39,8 +39,8 @@ operación seleccionada.
 # ___________________________________________________
 
 
-#accidentsfile = 'US_Accidents_Dec19.csv'
-accidentsfile = 'us_accidents_small.csv'
+accidentsfile = 'US_Accidents_Dec19.csv'
+#accidentsfile = 'us_accidents_small.csv'
 #accidentsfile = "us_accidents_dis_2016.csv"
 
 # ___________________________________________________
