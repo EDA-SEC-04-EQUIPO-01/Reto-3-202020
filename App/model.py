@@ -304,17 +304,20 @@ def getStateByDateRange(initialDate, finalDate, analyzer):
                 state = estado
     return [masAccidentada, state]
 
-def distance(lat1, lat2, lon1, lon2): 
-    lon1 = radians(lon1) 
-    lon2 = radians(lon2) 
-    lat1 = radians(lat1) 
-    lat2 = radians(lat2)    
-    dlon = lon2 - lon1  
-    dlat = lat2 - lat1 
-    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
-    c = 2 * asin(sqrt(a))   
-    r = 6371
-    return(c * r) 
+def distance(lat1, lat2, lon1, lon2):
+    if type(lat1) == float and type(lon1) == float:
+        lon1 = radians(lon1) 
+        lon2 = radians(lon2) 
+        lat1 = radians(lat1) 
+        lat2 = radians(lat2)    
+        dlon = lon2 - lon1  
+        dlat = lat2 - lat1 
+        a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+        c = 2 * asin(sqrt(a))   
+        r = 6371
+        return(c * r)
+    else:
+        return "a" 
 
 def getElement(key_value):
     try:
@@ -336,7 +339,7 @@ def getLatitudeRange(lat, lon, radius, analyzer):
         iterator2 = it.newIterator(weekDaysContent)
         while it.hasNext(iterator2):
             lon_lat = it.next(iterator2)
-            if distance(lat, float(lon_lat["lat"]), lon, float(lon_lat["lon"]))<=radius:
+            if distance(float(lat), float(lon_lat["lat"]), float(lon), float(lon_lat["lon"]))<=radius:
                 total +=1
                 isThereDay = m.get(crashesInRange, day)
                 if isThereDay is not None: 
