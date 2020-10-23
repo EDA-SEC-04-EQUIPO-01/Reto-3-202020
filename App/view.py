@@ -39,8 +39,8 @@ operación seleccionada.
 # ___________________________________________________
 
 
-accidentsfile = 'US_Accidents_Dec19.csv'
-#accidentsfile = 'us_accidents_small.csv'
+#accidentsfile = 'US_Accidents_Dec19.csv'
+accidentsfile = 'us_accidents_small.csv'
 #accidentsfile = "us_accidents_dis_2016.csv"
 
 # ___________________________________________________
@@ -134,11 +134,17 @@ while True:
         else:
             print("Ingrese un rango válido")
     elif int(inputs[0]) == 8:
-        lat = float(input("Ingrese la latitud de su punto de partida: "))
-        lon = float(input("Ingrese la longitud de su punto de partida: "))
-        radius = float(input("Ingrese el radio de comparación en kilometros: "))
-        res = controller.getLatitudRange(lat,lon,radius,cont)
-        print("En el radio de ", radius, "kilometros, se encontraron", res[0], "accidentes, reportados de la siguiente manera:", "\nLunes:",res[1], "\nMartes:", res[2], "\nMiercoles:", res[3], "\nJueves:", res[4], "\nViernes:", res[5], "\nSabado:", res[6], "\nDomingo:", res[7])
+        try:
+            lat = float(input("Ingrese la latitud de su punto de partida: "))
+            lon = float(input("Ingrese la longitud de su punto de partida: "))
+            radius = float(input("Ingrese el radio de comparación en kilometros: "))
+            res = controller.getLatitudRange(lat,lon,radius,cont)
+            if res is None:
+                print("Escriba un rango válido.")
+            else:
+                print("En el radio de ", radius, "kilometros, se encontraron", res[0], "accidentes, reportados de la siguiente manera:", "\nLunes:",res[1], "\nMartes:", res[2], "\nMiercoles:", res[3], "\nJueves:", res[4], "\nViernes:", res[5], "\nSabado:", res[6], "\nDomingo:", res[7])
+        except:
+            print("Inserte un rango valido")
     else:
         sys.exit(0)
 sys.exit(0)

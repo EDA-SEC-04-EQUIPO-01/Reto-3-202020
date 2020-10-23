@@ -92,23 +92,22 @@ def maxKey(analyzer):
 
 def getAccidentsBeforeDate(analyzer, date):
     #-------------------
-    
-    separar=date.split("-")
-    anio= int(separar[0])
-    mes= int(separar[1])
-    dia= int(separar[2])
-    if dia>1 and mes>1:
-        dia=dia-1
-    if dia==1 and mes>1:
-        mes=mes-1
-        dia=31
-    if dia==1 and mes==1:
-        anio=anio-1
-        mes=12
-        dia=31
-    fecha = str(anio)+"-"+str(mes)+"-"+str(dia)
-
     try:
+        separar=date.split("-")
+        anio= int(separar[0])
+        mes= int(separar[1])
+        dia= int(separar[2])
+        if dia>1 and mes>1:
+            dia=dia-1
+        if dia==1 and mes>1:
+            mes=mes-1
+            dia=31
+        if dia==1 and mes==1:
+            anio=anio-1
+            mes=12
+            dia=31
+        fecha = str(anio)+"-"+str(mes)+"-"+str(dia)
+
         newDate1 = datetime.datetime.strptime(fecha, '%Y-%m-%d')
         return model.getAccidentsBeforeDate(newDate1.date(),analyzer)
     except:
@@ -147,4 +146,7 @@ def accidentsByTimeRange(time1, time2, analyzer):
         return None
 
 def getLatitudRange(lat,lon,radius,analyzer):
-    return model.getLatitudeRange(lat,lon,radius,analyzer)
+    try:
+        return model.getLatitudeRange(lat,lon,radius,analyzer)
+    except:
+        return None
